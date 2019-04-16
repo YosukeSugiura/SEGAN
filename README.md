@@ -1,0 +1,2 @@
+# SEGAN
+SEGAN-NNabla
