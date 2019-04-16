@@ -18,8 +18,8 @@
     4. "data"フォルダ内に解凍したフォルダを保存する．
          
     5. すべてのwavファイルのサンプリング周波数を16kHzに変換する．  
-              例えば 以下のサイトなどで．
-              http://datashare.is.ed.ac.uk/bitstream/handle/10283/1942/noisy_testset_wav.zip
+       例えば 以下のサイトなどで．
+       http://datashare.is.ed.ac.uk/bitstream/handle/10283/1942/noisy_testset_wav.zip
               
     6. "segan.py"を実行する．
     
