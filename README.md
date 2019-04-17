@@ -26,7 +26,11 @@
 
    1.   "segan.py", "settings.py", "data.py" をダウンロードし，同じディレクトリに保存する．
    
-   2.   ディレクトリ内に"data", "pkl", "params" フォルダを作成する．
+   2.   ディレクトリ内に以下の３つのフォルダ "data", "pkl", "params" を作成する．
+   
+       - 「data」フォルダ： wavデータを保存する．
+       - 「pkl」フォルダ  ：pklファイル（圧縮ファイル）を保存する．
+       - 「params」フォルダ  ：ネットワークモデルを保存する．
    
    3.   下記のサイトから４つのデータセット(zip)をダウンロードし，解凍する．  
    
@@ -34,13 +38,15 @@
           - [noisy_trainset_wav.zip](http://datashare.is.ed.ac.uk/bitstream/handle/10283/1942/noisy_trainset_wav.zip)
           - [clean_testset_wav.zip](http://datashare.is.ed.ac.uk/bitstream/handle/10283/1942/clean_testset_wav.zip)
           - [noisy_testset_wav.zip](http://datashare.is.ed.ac.uk/bitstream/handle/10283/1942/noisy_testset_wav.zip)
-          
-    4. "data"フォルダ内に解凍したフォルダを保存する．
-         
-    5. すべてのwavファイルのサンプリング周波数を16kHzに変換する．  
+
+   4.  "data"フォルダ内に解凍したフォルダを保存する．
+
+   5. すべてのwavファイルのサンプリング周波数を16kHzに変換する．  
          例えば[このサイト](https://online-audio-converter.com/ja/)が便利．
     
-    6. "segan.py"を実行する．
+   6. "segan.py"を実行する．
+   
+   7. "params"
     
 ##
 
