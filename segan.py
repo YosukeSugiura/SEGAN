@@ -25,10 +25,10 @@ import nnabla.solvers as S
 import nnabla.initializer as I
 from nnabla.ext_utils import get_extension_context
 
-#   Figure 関連
+#   Figure
 import matplotlib.pyplot as plt
 
-from parameters import parameters
+from settings import settings
 import data as dt
 
 
@@ -68,7 +68,7 @@ def Generator(Noisy, z):
     ## ---------------------------------
     with nn.parameter_scope("gen"):
         # Genc : Encoder in Generator
-        enc1    = af(conv(Noisy, 16, name="enc1"))   # Input:(16384, 1) --> (16, 8192) *convolutionの結果は自動的に(フィルタ数, 出力サイズ)にreshapeされる
+        enc1    = af(conv(Noisy, 16, name="enc1"))   # Input:(16384, 1) --> (16, 8192) *convolution reshapes output to (No. of Filter, Output Size) automatically
         enc2    = af(conv(enc1, 32, name="enc2"))    # (16, 8192) --> (32, 4096)
         enc3    = af(conv(enc2, 32, name="enc3"))    # (32, 4096) --> (32, 2048)
         enc4    = af(conv(enc3, 64, name="enc4"))    # (32, 2048) --> (64, 1024)
@@ -159,13 +159,13 @@ def AbsoluteError_Scalor(x, val=1):
 #   Loss funcion
 # -------------------------------------------
 def Loss_dis(dval_real, dval_fake):
-    E_real = F.mean( SquaredError_Scalor(dval_real, val=1) )    # real:Disから1を出力するように
-    E_fake = F.mean( SquaredError_Scalor(dval_fake, val=0) )    # fake:Disから0を出力するように
+    E_real = F.mean( SquaredError_Scalor(dval_real, val=1) )    # real
+    E_fake = F.mean( SquaredError_Scalor(dval_fake, val=0) )    # fake
     return E_real + E_fake
 
 def Loss_gen(wave_fake, wave_true, dval_fake, lmd=100):
-    E_fake = F.mean( SquaredError_Scalor(dval_fake, val=1) )	# fake:Disから1を出力するように
-    E_wave = F.mean( F.absolute_error(wave_fake, wave_true) )  	# 再構成性能の向上
+    E_fake = F.mean( SquaredError_Scalor(dval_fake, val=1) )	# fake
+    E_wave = F.mean( F.absolute_error(wave_fake, wave_true) )  	# Reconstruction Performance
     return E_fake / 2 + lmd * E_wave
 
 # -------------------------------------------
@@ -191,133 +191,53 @@ def train(args):
 
     ##  Solver
     # RMSprop.
-    solver_gen = S.RMSprop(args.learning_rate)
-    solver_dis = S.RMSprop(args.learning_rate)
+    solver_gen = S.RMSprop(args.learning_rate_gen)
+    solver_dis = S.RMSprop(args.learning_rate_dis)
     # Adam
-    #solver_gen = S.Adam(args.learning_rate)
-    #solver_dis = S.Adam(args.learning_rate)
+    #solver_gen = S.Adam(args.learning_rate_gen)
+    #solver_dis = S.Adam(args.learning_rate_dis)
     # set parameter
     with nn.parameter_scope("gen"):
         solver_gen.set_parameters(nn.get_parameters())
     with nn.parameter_scope("dis"):
         solver_dis.set_parameters(nn.get_parameters())
 
-    ##  Create monitor
-    import nnabla.monitor as M
-    monitor = M.Monitor(args.monitor_path)
-    monitor_loss_gen = M.MonitorSeries("Generator loss", monitor, interval=1)
-    monitor_loss_dis = M.MonitorSeries("Discriminator loss", monitor, interval=1)
-    monitor_time = M.MonitorTimeElapsed("Time", monitor, interval=100)
-
     ##  Load data & Create batch
-    clean_data, noisy_data = dt.data_loader()           # データの読み込み
-    baches = dt.create_batch(clean_data, noisy_data, args.batch_size)# バッチ生成関数の初期化
+    clean_data, noisy_data = dt.data_loader()
+    baches = dt.create_batch(clean_data, noisy_data, args.batch_size)
     del clean_data, noisy_data
 
     # for plot
     ax = np.linspace(0, 1, 16384)
 
-    ##  Pre-train
-    ##----------------------------------------------------
-    print('== Start Pre-Training ==')
-
-    # Process pre-train
-    if args.pretrain:
-
-        fig = plt.figure()          # open fig object
-
-        ##  Retrain : load from past parameter
-        if args.retrain:
-            # Load generator parameter
-            with nn.parameter_scope("gen"):
-                nn.load_parameters(os.path.join(args.model_save_path, "generator_pre_param_%06d.h5" % args.pre_epoch))
-
-        ##  Solver
-        # Adam
-        solver_ae = S.Adam(args.pre_earning_rate, beta1=0.5)
-        # set parameter
-        with nn.parameter_scope("gen"):
-            solver_ae.set_parameters(nn.get_parameters())
-
-        #  Epoch iteration
-        for i in range(args.pre_epoch):
-
-            print('--------------------------------')
-            print(' Epoch :: %d/%d' % (i + 1, args.epoch))
-            print('--------------------------------')
-
-            #  Batch iteration
-            for j in range(baches.batch_num):
-                print('  Pre-Train (Epoch.%d) - %d/%d' % (i + 1, j + 1, baches.batch_num))
-
-                # Set Batch
-                clean.d, noisy.d = baches.next(j)
-                z.d = np.random.randn(*z.shape)
-
-                # Update Generator by Auto-Encoder
-                solver_ae.zero_grad()
-                loss_ae.forward(clear_no_need_grad=True)
-                loss_ae.backward(clear_buffer=True)
-                solver_ae.weight_decay(args.weight_decay)
-                solver_ae.update()
-
-                # Display
-                if (j + 1) % 10 == 0:
-                    # Display loss value
-                    genout.forward(clear_buffer=True)
-                    print('  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-                    print('  Epoch #%d, %d/%d  Loss ::' % (i + 1, j + 1, baches.batch_num))
-                    print('     Reconstruction Error = %.2f' % loss_ae.d)
-                    print('  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-
-                    # Plot wave
-                    plt.cla()
-                    plt.plot(ax, genout.d[0, 0, :])
-                    plt.plot(ax, clean.d[0, 0, :], color='crimson')
-                    plt.show(block=False)
-                    plt.pause(0.001)
-
-        ##  Save generator parameter
-        with nn.parameter_scope("gen"):
-            nn.save_parameters(os.path.join(args.model_save_path, "generator_pre_param_%06d.h5" % args.pre_epoch))
-
-        ##  Save waveform to png
-        plt.cla()
-        plt.plot(ax, genout.d[0, 0, :])
-        plt.plot(ax, clean.d[0, 0, :], color='crimson')
-        plt.show(block=False)
-        plt.savefig(os.path.join(args.model_save_path, "figs/plt_pre_%06d.png" % args.pre_epoch))
-
-
     ##  Train
     ##----------------------------------------------------
     print('== Start Training ==')
-
-    # retrain = True : Load past-trained parameter
-    if args.retrain:
-
-        print(' Retrain parameter from past-trained network')
+    if args.epoch_from > 0:
+        # Load past-trained parameter
+        print(' Retrain parameter from pre-trained network')
 
         # load generator parameter
         with nn.parameter_scope("gen"):
-            nn.load_parameters(os.path.join(args.model_save_path, "generator_pre_param_%06d.h5" % args.pre_epoch)) # Pre-Train
-            # nn.load_parameters(os.path.join(args.model_save_path, "generator_param_%06d.h5" % args.epoch)) # Not Pre-Train
+            file_path = os.path.join(args.model_save_path, 'generator_param_{:04}.h5'.format(args.epoch_from))
+            nn.load_parameters(os.path.join(args.model_save_path, 'generator_param_{:04}.h5'.format(args.epoch_from))) # Pre-Train
+
         # load discriminator parameter
         with nn.parameter_scope("dis"):
-            nn.load_parameters(os.path.join(args.model_save_path, "discriminator_param_%06d.h5" % args.epoch))
+            nn.load_parameters(os.path.join(args.model_save_path, 'discriminator_param_{:04}.h5'.format(args.epoch_from)))
 
     fig = plt.figure() # open fig object
 
     #   Epoch iteration
-    for i in range(args.epoch):
+    for i in range(args.epoch_from, args.epoch):
 
         print('--------------------------------')
-        print(' Epoch :: %d/%d' % (i + 1, args.epoch))
+        print(' Epoch :: {0}/{1}'.format(i + 1, args.epoch))
         print('--------------------------------')
 
         #  Batch iteration
         for j in range(baches.batch_num):
-            print('  Train (Epoch.%d) - %d/%d' % (i+1, j+1, baches.batch_num))
+            print('  Train (Epoch. {0}) - {1}/{2}'.format(i+1, j+1, baches.batch_num))
 
             # Batch setting
             clean.d, noisy.d = baches.next(j)
@@ -338,21 +258,16 @@ def train(args):
             solver_dis.weight_decay(args.weight_decay)
             solver_dis.update()
 
-            # Monitoring
-            monitor_loss_gen.add(i + 1, loss_gen.d.copy())  # generator
-            monitor_loss_dis.add(i+1, loss_dis.d.copy())    # discriminator
-            monitor_time.add(j+1)                           # elapsed time
-
             # Display
             if (j+1) % 10 == 0:
                 # Display
                 loss_ae.forward(clear_buffer =True)
                 genout.forward(clear_buffer =True)
                 print('  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-                print('  Epoch #%d, %d/%d  Loss ::' % (i + 1, j + 1, baches.batch_num))
-                print('     Gen = %.2f' % loss_gen.d)
-                print('     Dis = %.4f' % loss_dis.d)
-                print('     Reconstruction Error = %.4f' % loss_ae.d)
+                print('  Epoch #{0}, {1}/{2}  Loss ::'.format(i + 1, j + 1, baches.batch_num))
+                print('     Generator Loss = {:.4f}'.format(loss_gen.d))
+                print('     Discriminator Loss = {:.4f}'.format(loss_dis.d))
+                print('     Reconstruction Error = {:.4f}'.format(loss_ae.d))
                 print('  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
                 # Plot
@@ -362,20 +277,32 @@ def train(args):
                 plt.show(block=False)                   # update fig
                 plt.pause(0.01)                         # pause for drawing
 
+        ## Save parameters
+        if ((i+1) % args.model_save_cycle) == 0:
+            # save generator parameter
+            with nn.parameter_scope("gen"):
+                nn.save_parameters(os.path.join(args.model_save_path, 'generator_param_{:04}.h5'.format(i+1)))
+            # save discriminator parameter
+            with nn.parameter_scope("dis"):
+                nn.save_parameters(os.path.join(args.model_save_path, 'discriminator_param_{:04}.h5'.format(i+1)))
+
     ## Save parameters
     # save generator parameter
     with nn.parameter_scope("gen"):
-        nn.save_parameters(os.path.join(args.model_save_path, "generator_param_%06d.h5" % args.epoch))
+        nn.save_parameters(os.path.join(args.model_save_path, "generator_param_{:04}.h5".format(args.epoch)))
     # save discriminator parameter
     with nn.parameter_scope("dis"):
-        nn.save_parameters(os.path.join(args.model_save_path, "discriminator_param_%06d.h5" % args.epoch))
+        nn.save_parameters(os.path.join(args.model_save_path, "discriminator_param_{:04}.h5".format(args.epoch)))
 
 
 def test(args):
 
     ##  Load data & Create batch
-    clean_data, noisy_data = dt.data_loader()
-    baches_test = dt.create_batch_test(clean_data, noisy_data, start_time=1000, stop_time=1020)
+    clean_data, noisy_data = dt.data_loader(test=True)
+    # Batch
+    #  - Proccessing speech interval can be adjusted by "start_frame" and "start_frame".
+    #  - "None" -> All speech in test dataset.
+    baches_test = dt.create_batch_test(clean_data, noisy_data,start_frame=None,stop_frame=None)
     del clean_data, noisy_data
 
     ##  Create network
@@ -388,15 +315,14 @@ def test(args):
     ##  Load parameter
     # load generator
     with nn.parameter_scope("gen"):
-        nn.load_parameters(os.path.join(args.model_save_path, "generator_param_%06d.h5" % args.epoch))
+        nn.load_parameters(os.path.join(args.model_save_path, "generator_param_{:04}.h5".format(args.epoch)))
 
     ##  Validation
     noisy_t.d = baches_test.noisy
     #z.d = np.random.randn(*z.shape)
-    z.d = np.zeros(z.shape)
+    z.d = np.zeros(z.shape)             # zero latent valiables
 
     output_t.forward()
-    # C.forward(clear_buffer =True)
 
     ##  Create wav files
     clean = baches_test.clean.flatten()
@@ -411,38 +337,22 @@ def test(args):
     ax = np.linspace(0, 1, len(output))     # axis
     plt.plot(ax, output)                    # output waveform
     plt.plot(ax, clean, color='crimson')    # clean waveform
-    plt.savefig(os.path.join(args.model_save_path, "figs/test_%06d.png" % args.epoch))# save fig to png
     plt.show()      # Stop
-
-    # import csv
-    # for i, bat in enumerate(C.d):
-    #     with open(os.path.join(args.model_save_path, 'latent%d.csv' % i), 'w') as f:
-    #         writer = csv.writer(f, lineterminator='\n')
-    #         for row_ in bat:
-    #             writer.writerow(row_)
 
 
 
 if __name__ == '__main__':
 
+    # Load settings
+    args = settings()
+
     # GPU connection
-    ctx = get_extension_context('cudnn', device_id=0)
+    ctx = get_extension_context('cudnn', device_id=args.device_id)
     nn.set_default_context(ctx)
 
-    # Load parameters
-    args = parameters()
-
     # Training
-    #   1. Pre-train for only generator
-    #       -- if "pretrain"
-    #           - if "retrain"     -> load trained-generator & restart pre-train
-    #           - else             -> initialize generator & start pre-train
-    #       -- else                -> nothing
-    #   2. Train
-    #       -- if "retrain"        -> load trianed-generator and trained-discriminator & restart train
-    #       -- else                -> start train (* normal case)
-    # train(args)
+    train(args)
 
     # Test
-    test(args)
+    #test(args)
 
