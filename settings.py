@@ -25,10 +25,10 @@ class settings:
         self.model_save_cycle   = 1                 # Epoch cycle for saving model (init:1)
 
         # Wave files
-        self.clean_train_path   = '../00_data/SEGAN/clean_trainset_wav'     # Folder containing clean wav (train)
-        self.noisy_train_path   = '../00_data/SEGAN/noisy_trainset_wav'     # Folder containing noisy wav (train)
-        self.clean_test_path    = '../00_data/SEGAN/clean_testset_wav'      # Folder containing clean wav (test)
-        self.noisy_test_path    = '../00_data/SEGAN/noisy_testset_wav'      # Folder containing noisy wav (test)
+        self.clean_train_path   = '../00_data/clean_trainset_wav'     # Folder containing clean wav (train)
+        self.noisy_train_path   = '../00_data/noisy_trainset_wav'     # Folder containing noisy wav (train)
+        self.clean_test_path    = '../00_data/clean_testset_wav'      # Folder containing clean wav (test)
+        self.noisy_test_path    = '../00_data/noisy_testset_wav'      # Folder containing noisy wav (test)
 
         # Pkl files for train
         self.train_pkl_path     = 'pkl'             # Folder of pkl files for train
