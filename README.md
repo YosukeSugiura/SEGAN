@@ -43,10 +43,9 @@
 
    5. すべてのwavファイルのサンプリング周波数を16kHzに変換する．  
          例えば[このサイト](https://online-audio-converter.com/ja/)が便利．
+         変換前のwavファイルは削除してよい．
     
    6. "segan.py"を実行する．
-   
-   7. "params"
     
 ##
 
