@@ -19,7 +19,7 @@
   - nnabla-ext-cuda v1.0.12 (v1.0.12以上)
   - scipy 
   - numba
-  
+  - joblib
 
 
 ## ダウンロードと設定
