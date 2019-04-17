@@ -2,14 +2,22 @@
 
 ソースコードの使い方
 
-##  必要パッケージ
+##  動作保証環境
+
+### Python 関連
+
+  - Python 3.6 (3.5以上なら動くはず)
+  - CUDA 9.2 ([NNablaのversion](https://github.com/sony/nnabla/releases)に適合するもの)
+  - CuDNN 7.3
+
+### Python パッケージ
 
 以下のパッケージをpipでインストールしてください．  
 （pip を最新版にする必要があるかもしれません．）
 
-  - nnabla (>1.0.12)
-  - nnabla-ext-cuda (>1.0.12)
-  - scipy
+  - nnabla v1.0.12  (v1.0.12以上)
+  - nnabla-ext-cuda v1.0.12 (v1.0.12以上)
+  - scipy 
   - numba
   
 
@@ -30,6 +38,7 @@
     4. "data"フォルダ内に解凍したフォルダを保存する．
          
     5. すべてのwavファイルのサンプリング周波数を16kHzに変換する．  
+         例えば[このサイト](https://online-audio-converter.com/ja/)が便利．
     
     6. "segan.py"を実行する．
     
