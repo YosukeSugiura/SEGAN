@@ -15,8 +15,8 @@
 以下のパッケージをpipでインストールしてください．  
 （pip を最新版にする必要があるかもしれません．）
 
-  - nnabla v1.0.12  (v1.0.12以上)
-  - nnabla-ext-cuda v1.0.12 (v1.0.12以上)
+  - nnabla  (v1.0.12以上)
+  - nnabla-ext-cuda  (v1.0.12以上)
   - scipy 
   - numba
   - joblib
