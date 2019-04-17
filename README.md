@@ -39,7 +39,7 @@
           - [clean_testset_wav.zip](http://datashare.is.ed.ac.uk/bitstream/handle/10283/1942/clean_testset_wav.zip)
           - [noisy_testset_wav.zip](http://datashare.is.ed.ac.uk/bitstream/handle/10283/1942/noisy_testset_wav.zip)
 
-   4.  "data"フォルダ内に解凍したフォルダを保存する．
+   4.  "data"フォルダ内に解凍した４つのフォルダを保存する．
 
    5. すべてのwavファイルのサンプリング周波数を16kHzに変換する．  
          例えば[このサイト](https://online-audio-converter.com/ja/)が便利．
