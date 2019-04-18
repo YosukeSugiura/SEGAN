@@ -247,15 +247,25 @@ def train(args):
             # update Generator
             solver_gen.zero_grad()
             loss_gen.forward(clear_no_need_grad=True)
-            loss_gen.backward(clear_buffer=True)
-            solver_gen.weight_decay(args.weight_decay)
+            # - Float 16-bit precision mode :
+            loss_gen.backward(8, clear_buffer=True)
+            solver_gen.scale_grad(1. / 8)
+            solver_gen.weight_decay(args.weight_decay * 8)
+            # - Float 32-bit precision mode :
+            # loss_gen.backward(clear_buffer=True)
+            # solver_gen.weight_decay(args.weight_decay)
             solver_gen.update()
 
             # update Discriminator
             solver_dis.zero_grad()
             loss_dis.forward(clear_no_need_grad=True)
-            loss_dis.backward(clear_buffer=True)
-            solver_dis.weight_decay(args.weight_decay)
+            # - Float 16-bit precision mode :
+            loss_dis.backward(8, clear_buffer=True)
+            solver_dis.scale_grad(1. / 8)
+            solver_dis.weight_decay(args.weight_decay * 8)
+            # - Float 32-bit precision mode :
+            # loss_dis.backward(clear_buffer=True)
+            # solver_dis.weight_decay(args.weight_decay)
             solver_dis.update()
 
             # Display
@@ -347,7 +357,10 @@ if __name__ == '__main__':
     args = settings()
 
     # GPU connection
-    ctx = get_extension_context('cudnn', device_id=args.device_id)
+    # - Float 16-bit precision mode : When GPU memory often gets stack, please use it.
+    ctx = get_extension_context('cudnn', device_id=args.device_id, type_config='half')
+    # - Float 32-bit precision mode :
+    # ctx = get_extension_context('cudnn', device_id=args.device_id)
     nn.set_default_context(ctx)
 
     # Training
