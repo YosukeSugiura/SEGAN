@@ -63,11 +63,11 @@
 ### Float 16bit (半精度浮動小数) モードについて
 
 バッチサイズを大きくしたり，ネットワークサイズを大きくすると，GPUで Memory Stack Error が発生する場合がある(CUDAのエラーとしてコンソールに表示されるはず)．
-このエラーはGPUでの計算精度を16bit(半精度浮動小数)にすることで Error を抑えられる場合がある．半精度浮動小数で計算したい場合，nnablaのコンテキストを以下のように設定すれば良い(ソースコードではデフォルトでこれ)．
-'''
+このエラーはGPUでの計算精度を16bit(半精度浮動小数)にすることで Error を抑えられる場合がある．半精度浮動小数で計算したい場合，nnablaのコンテキストを以下のように設定すれば良い(ソースコードではデフォルトでこれに設定している)．
+```
 ctx = get_extension_context('cudnn', device_id=args.device_id, type_config='half')
 nn.set_default_context(ctx)
-'''
+```
 これでもだめなら，CUDAで使用するワークスペースのメモリを制限する必要がある．
 詳しい説明は [nnabla-ext-cudaのページ](https://github.com/sony/nnabla-ext-cuda)を参照のこと．
    
