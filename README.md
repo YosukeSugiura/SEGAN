@@ -63,7 +63,7 @@
 ### Float 16bit (半精度浮動小数) モードについて
 
 バッチサイズを大きくしたり，ネットワークサイズを大きくすると，GPUで Memory Stack Error が発生する場合がある(CUDAのエラーとしてコンソールに表示されるはず)．
-このエラーはGPUでの計算精度を16bit(半精度浮動小数)にすることで Error を抑えられる場合がある．半精度浮動小数で計算したい場合，nnablaのコンテキストを以下のように設定すれば良い(ソースコードではデフォルトでこれに設定している)．
+このエラーはGPUでの計算精度を16bit(半精度浮動小数)にすることで抑えられる場合がある．半精度浮動小数で計算したい場合，nnablaのコンテキストを以下のように設定すれば良い(ソースコードではデフォルトでこれに設定している)．
 ```
 ctx = get_extension_context('cudnn', device_id=args.device_id, type_config='half')
 nn.set_default_context(ctx)
@@ -87,12 +87,12 @@ train(args)
    
 ### 学習時の動作
    
-train(args)関数を実行すると，"pkl"フォルダに学習用データセット（xxxx.pkl）が生成される．  
+main関数内のtrain(args)関数を実行すると，"pkl"フォルダに学習用データセット（xxxx.pkl）が生成される．  
 また self.model_save_cycle で設定されたエポックごとに"params"フォルダにネットワークモデル（xxxx.h5）が保存される．
    
 ### 推論時の動作
 
-train(args)関数を実行すると，"pkl"フォルダに推論用データセット（xxxx.pkl）が生成される．    
+main関数内のtest(args)関数を実行すると，"pkl"フォルダに推論用データセット（xxxx.pkl）が生成される．    
 また，処理結果として以下のwavファイルが生成される．
    
    - clean.wav ：原音声 wavファイル
