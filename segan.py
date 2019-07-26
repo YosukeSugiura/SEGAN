@@ -291,27 +291,16 @@ def Discriminator(Noisy, Clean, test=False, output_hidden=False, name="dis"):
 def SquaredError_Scalor(x, val=1):
     return F.squared_error(x, F.constant(val, x.shape))
 
-def AbsoluteError_Scalor(x, val=1):
-    return F.absolute_error(x, F.constant(val, x.shape))
-
-def LpError_Scalor(x, val=1, p=2):
-    # 0 < p < 1
-    ae = F.absolute_error(x, F.constant(val, x.shape))
-    # return ae
-    # return (ae ** 1)
-    # return F.pow2(ae, F.constant(p, ae.shape))
-    return F.pow_scalar(x=ae, val=p)
-
 # -------------------------------------------
 #   Loss funcion
 # -------------------------------------------
 def Loss_dis(dval_real, dval_fake):
-    E_real = F.mean( LpError_Scalor(dval_real, val=1) )    # real
-    E_fake = F.mean( LpError_Scalor(dval_fake, val=0) )    # fake
+    E_real = F.mean( SquaredError_Scalor(dval_real, val=1) )    # real
+    E_fake = F.mean( SquaredError_Scalor(dval_fake, val=0) )    # fake
     return E_real + E_fake
 
 def Loss_gen(wave_fake, wave_true, dval_fake, lmd=100):
-    E_fake = F.mean( LpError_Scalor(dval_fake, val=1) )	    # fake
+    E_fake = F.mean( SquaredError_Scalor(dval_fake, val=1) )	    # fake
     E_wave = F.mean( F.absolute_error(wave_fake, wave_true) )  	# Reconstruction Performance
     return E_fake / 2 + lmd * E_wave
 
@@ -361,7 +350,7 @@ def train(args):
             loss.forward(clear_no_need_grad=True)               # calculate forward
             loss.backward(self.scale, clear_buffer=True)      # calculate backward
             solver.scale_grad(1. / self.scale)                # scaling
-            solver.weight_decay(args.weight_decay * self.scale) # decay
+            solver.weight_decay(args.weight_decay * self.weight_decay_rate) # decay
             solver.update()                                     # update
 
 
