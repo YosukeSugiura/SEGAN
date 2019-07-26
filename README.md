@@ -4,7 +4,7 @@ Implementation of Speech Enhancement GAN (SEGAN) by [NNabla](https://nnabla.read
 
 **Original Paper**  
 SEGAN: Speech Enhancement Generative Adversarial Network  
-https://arxiv.org/abs/1703.09452]
+https://arxiv.org/abs/1703.09452
 
 ##  Requrement
 
