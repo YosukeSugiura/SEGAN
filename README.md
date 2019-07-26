@@ -32,7 +32,7 @@ Please install the following packages with pip.
 
  **[English]**
 
-   1.   Download ```segan.py```, ```settings.py```, ```data.py``` and save them to the same directory.
+   1.   Download ```segan.py```, ```settings.py```, ```data.py``` and save them into the same directory.
    
    2.  In the directory, make three folders  ```data```, ```pkl```, ```params``` .
    
@@ -40,7 +40,7 @@ Please install the following packages with pip.
         - ```pickle``` folder  :  save pickled database "~.pkl".
         - ```params``` folder  :  save parameters including network models.
 
-   3.   Download 4 dataset (zip) from the following web sites, and unzip them.
+   3.   Download  the following 4 dataset, and unzip them.
 
           - [clean_trainset_wav.zip](http://datashare.is.ed.ac.uk/bitstream/handle/10283/1942/clean_trainset_wav.zip)
           - [noisy_trainset_wav.zip](http://datashare.is.ed.ac.uk/bitstream/handle/10283/1942/noisy_trainset_wav.zip)
@@ -50,10 +50,8 @@ Please install the following packages with pip.
    4. Move those unzipped 4 folders into ```data```  folder.
 
    5.  Convert the sampling frequency of all the wav data to 16kHz.
-         For example, [this site](https://online-audio-converter.com/ja/) is useful.
-         After converting, you can delete the original wav data.
-         
-   6.  Save 
+         For example, [this site](https://online-audio-converter.com/) is useful.
+         After converting, you can delete the original wav data. 
    
  **[Japanese]**
    
@@ -109,7 +107,7 @@ Refer to the below when you want to know how to use the spectial paramters.
 
  **[English]**
  
-If you are facing GPU Memory Stack Error, please try **Half Precision Floating Point Mode** which can downsize the calculation precision and so reduce the memory usage. If you want to use, please insert the following commands before running the network.
+If you are facing GPU Memory Stack Error, please try **Half Precision Floating Point Mode** which can downsize the calculation precision and thus reduce the memory usage. If you want to use, please run the following commands before defining the network.
 ```python
 ctx = get_extension_context('cudnn', device_id=args.device_id, type_config='half')
 nn.set_default_context(ctx)
