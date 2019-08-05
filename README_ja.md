@@ -84,7 +84,7 @@ nn.set_default_context(ctx)
    
 ##  実行
 
-   1. 学習の場合, ```Train```の値を0にする．推論の場合，```Train```の値を1にする．
+   1. 学習の場合, ```Train```の値を1にする．推論の場合，```Train```の値を0にする．
    
 ```python
     Train = 0
