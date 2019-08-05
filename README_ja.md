@@ -87,14 +87,19 @@ nn.set_default_context(ctx)
    1. 学習の場合, ```Train```の値を0にする．推論の場合，```Train```の値を1にする．
    
 ```python
-# Training
-train(args)
-
-# Test
-#test(args)
+    Train = 0
+    if Train:
+        # Training
+        nn.set_default_context(ctx)
+        train(args)
+    else:
+        # Test
+        #nn.set_default_context(ctx)
+        test(args)
+        pesq_score('clean.wav','output_segan.wav')
 ```
 
-   2.  Run ```segan.py```.
+   2.   ```segan.py```を実行する．
    
 ### 学習時
  
