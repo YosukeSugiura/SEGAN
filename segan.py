@@ -536,6 +536,6 @@ if __name__ == '__main__':
     else:
         # Test
         #nn.set_default_context(ctx)
-        #test(args)
+        test(args)
         pesq_score('clean.wav','output_segan.wav')
         # PESQ score = 2.8472938394546508  : (2019.7.18)
