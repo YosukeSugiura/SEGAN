@@ -46,7 +46,7 @@ Please install the following packages with pip.
 
 ## Download & Create Database
 
-   1.   Download ```segan.py```, ```settings.py```, ```data.py``` and save them into the same directory.
+   1.   Download ```segan.py```, ```settings.py```, ```data.py```, ```display.py``` and save them into the same directory.
    
    2.  In the directory, make three folders  ```data```, ```pkl```, ```params``` .
    
