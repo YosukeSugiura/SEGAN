@@ -2,7 +2,7 @@
 
 Implementation of Speech Enhancement GAN (SEGAN) by [NNabla](https://nnabla.readthedocs.io/en/latest/#)
 
-Read me Japanese Ver.  (日本語バージョンはこちら) -> [Link](https://github.com/YosukeSugiura/SEGAN/blob/master/README_ja.md)
+Read me Japanese Ver.  (**日本語バージョンはこちら**) -> [Link](https://github.com/YosukeSugiura/SEGAN/blob/master/README_ja.md)
 
 **Original Paper**  
 SEGAN: Speech Enhancement Generative Adversarial Network  
@@ -21,8 +21,8 @@ https://arxiv.org/abs/1703.09452
 Please install the following packages with pip.
 (If necessary, install latest pip first.)
 
-  - nnabla  (over v1.0.20)
-  - nnabla-ext-cuda  (over v1.0.20)
+  - nnabla  (over v1.0.19)
+  - nnabla-ext-cuda  (over v1.0.19)
   - scipy 
   - numba  
   - joblib  
