@@ -30,6 +30,20 @@ Please install the following packages with pip.
   - pyqtgraph  (after installing pyQT5)
   - pypesq (see ["install with pip"](https://github.com/ludlows/python-pesq#install-with-pip) in offical site)
 
+## Contents
+
+  - **segan.py**  
+      This is main source code. Run this.
+  
+  - **data.py**  
+      This is for creating Batch Data. Before runnning, please download wav dataset as seen below.
+      
+  - **settings.py**  
+      This includes setting parameters.
+      
+  - **display.py**  
+      This includes some functions to display results.
+
 ## Download & Create Database
 
    1.   Download ```segan.py```, ```settings.py```, ```data.py``` and save them into the same directory.
