@@ -23,8 +23,8 @@ https://arxiv.org/abs/1703.09452
  pip install (package名) --update
 ```
 
-  - nnabla  (v1.0.20以上)
-  - nnabla-ext-cuda  (v1.0.20以上)
+  - nnabla  (v1.0.19以上)
+  - nnabla-ext-cuda  (v1.0.19以上)
   - scipy 
   - numba  
   - joblib  
